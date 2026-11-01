@@ -1,0 +1,584 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIG MATCH | Matchday Experience</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* Compact digital ticket */
+    .digital-ticket {
+      width: min(100%, 520px);
+      margin: 20px auto;
+      overflow: hidden;
+      border-radius: 12px;
+      font-family: Inter, sans-serif;
+    }
+
+    .bm-ticket-top,
+    .digital-ticket-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+    }
+
+    .digital-brand {
+      font-size: 23px;
+      font-weight: 800;
+    }
+
+    .bm-ticket-brand small,
+    .bm-ticket-type {
+      font-size: 9px;
+      letter-spacing: 1px;
+    }
+
+    .bm-ticket-match {
+      padding: 14px 16px;
+      text-align: center;
+    }
+
+    .bm-match-label {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+    }
+
+    .bm-teams {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin: 12px 0;
+    }
+
+    .bm-teams h2 {
+      font-size: clamp(20px, 5vw, 27px);
+      line-height: 1;
+      margin: 0;
+    }
+
+    .bm-teams span {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .bm-match-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px 14px;
+      font-size: 10px;
+    }
+
+    .bm-ticket-body {
+      display: grid;
+      grid-template-columns: 125px minmax(0, 1fr);
+      align-items: center;
+      gap: 14px;
+      padding: 15px;
+    }
+
+    .bm-ticket-qr {
+      text-align: center;
+      min-width: 0;
+    }
+
+    #ticketQrCode {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 120px;
+    }
+
+    #ticketQrCode img,
+    #ticketQrCode canvas {
+      width: 115px !important;
+      height: 115px !important;
+      max-width: 100%;
+    }
+
+    .bm-ticket-qr strong,
+    .bm-ticket-qr small {
+      display: block;
+      margin-top: 5px;
+      font-size: 9px;
+    }
+
+    .bm-ticket-info {
+      min-width: 0;
+      text-align: center;
+    }
+
+    .bm-ticket-number {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .bm-ticket-number small,
+    .bm-seat-grid small,
+    .bm-ticket-price small {
+      font-size: 9px;
+      letter-spacing: 1px;
+    }
+
+    .bm-ticket-number strong {
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    #ticketStatus {
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .bm-seat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 8px;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .bm-seat-grid > div {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .bm-seat-grid strong {
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .bm-ticket-price {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+      padding: 9px 0;
+      border-top: 1px dashed currentColor;
+    }
+
+    .bm-ticket-price strong {
+      font-size: 15px;
+    }
+
+    .bm-small-qr {
+      display: none;
+    }
+
+    .bm-ticket-barcode {
+      padding: 8px 15px;
+      text-align: center;
+    }
+
+    .bm-barcode-lines {
+      height: 23px;
+      margin-bottom: 5px;
+    }
+
+    .bm-ticket-barcode small {
+      font-size: 9px;
+      overflow-wrap: anywhere;
+    }
+
+    .digital-ticket-footer strong,
+    .digital-ticket-footer span {
+      font-size: 9px;
+      letter-spacing: .8px;
+    }
+
+    .ticket-lookup {
+      width: min(100%, 440px);
+      margin: 15px auto;
+      padding: 16px;
+      border-radius: 10px;
+    }
+
+    .ticket-lookup input {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      margin: 7px 0 12px;
+    }
+
+    .ticket-lookup button,
+    .ticket-actions button {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .ticket-actions {
+      width: min(100%, 520px);
+      margin: 12px auto;
+    }
+
+    @media (max-width: 480px) {
+      .bm-ticket-body {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 12px;
+      }
+
+      .bm-ticket-qr {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #ticketQrCode {
+        min-height: 105px;
+      }
+
+      #ticketQrCode img,
+      #ticketQrCode canvas {
+        width: 100px !important;
+        height: 100px !important;
+      }
+
+      .bm-ticket-info {
+        width: 100%;
+      }
+
+      .bm-seat-grid {
+        max-width: 280px;
+        margin: auto;
+      }
+
+      .bm-ticket-top {
+        padding: 10px 12px;
+      }
+
+      .bm-ticket-match {
+        padding: 12px;
+      }
+
+      .digital-ticket-footer {
+        padding: 10px 12px;
+      }
+    }
+
+    @media print {
+      body.printing-ticket * {
+        visibility: hidden !important;
+      }
+
+      body.printing-ticket #digitalTicket,
+      body.printing-ticket #digitalTicket * {
+        visibility: visible !important;
+      }
+
+      body.printing-ticket header,
+      body.printing-ticket footer,
+      body.printing-ticket main > section:not(#my-ticket),
+      body.printing-ticket #my-ticket > *:not(#digitalTicket) {
+        display: none !important;
+      }
+
+      body.printing-ticket #my-ticket {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      body.printing-ticket #digitalTicket {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        max-width: 520px !important;
+        margin: 0 auto !important;
+        box-shadow: none !important;
+        break-inside: avoid !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="navbar">
+  <a class="logo" href="#">BIG<span>MATCH.</span></a>
+
+  <nav id="navLinks">
+    <a href="#home">Home</a>
+    <a href="#tickets">Tickets</a>
+    <a href="#seats">Choose Seats</a>
+    <a href="#my-ticket">My Ticket</a>
+    <a href="#about">About</a>
+  </nav>
+
+  <a href="#tickets" class="nav-button">Get Tickets</a>
+  <button class="menu-toggle" id="menuToggle" type="button">☰</button>
+</header>
+
+<main>
+
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <span class="eyebrow">THE BEAUTIFUL GAME RETURNS</span>
+      <h1>ONE CITY.<br>TWO GIANTS.<br><span>ONE SHOWDOWN.</span></h1>
+      <p>Bayern Munich vs Ajax</p>
+
+      <div class="hero-details">
+        <span>05 JANUARY 2027</span>
+        <span>NAIROBI, KENYA</span>
+      </div>
+             <div class="capacity-display">
+  <div>
+    <strong>60,000</strong>
+    <span>STADIUM CAPACITY</span>
+  </div>
+  <div>
+    <strong>50,000</strong>
+    <span>PLANNED TICKET TARGET</span>
+  </div>
+</div> 
+
+
+      <a href="#tickets" class="primary-button">EXPLORE TICKETS ↗</a>
+      <p class="notice">YOUR TICKET. YOUR PASSION. YOUR MATCH.</p>
+    </div>
+  </section>
+
+  <section class="section" id="tickets">
+    <div class="section-heading">
+      <span class="eyebrow">YOUR MATCHDAY STARTS HERE</span>
+      <h2>CHOOSE YOUR <span>TICKET.</span></h2>
+      <p>Find your perfect matchday experience.</p>
+    </div>
+
+    <div class="ticket-grid">
+      <article class="ticket-card vvip">
+        <span class="ticket-label">EXCLUSIVE</span>
+        <h3>VVIP</h3>
+        <p>Premium matchday experience</p>
+        <h2>KSh 25,000</h2>
+        <button class="choose-button" data-category="VVIP">SELECT CATEGORY</button>
+      </article>
+
+      <article class="ticket-card vip">
+        <span class="ticket-label">PREMIUM</span>
+        <h3>VIP</h3>
+        <p>Excellent views of the action</p>
+        <h2>KSh 15,000</h2>
+        <button class="choose-button" data-category="VIP">SELECT CATEGORY</button>
+      </article>
+
+      <article class="ticket-card gold">
+        <span class="ticket-label">GREAT VIEW</span>
+        <h3>GOLD</h3>
+        <p>Enjoy every moment</p>
+        <h2>KSh 8,000</h2>
+        <button class="choose-button" data-category="GOLD">SELECT CATEGORY</button>
+      </article>
+
+      <article class="ticket-card regular">
+        <span class="ticket-label">MATCHDAY</span>
+        <h3>REGULAR</h3>
+        <p>Be part of the atmosphere</p>
+        <h2>KSh 3,000</h2>
+        <button class="choose-button" data-category="REGULAR">SELECT CATEGORY</button>
+      </article>
+    </div>
+
+    
+  </section>
+
+  <section class="section seat-section" id="seats">
+    <div class="section-heading">
+      <span class="eyebrow">YOUR SEAT. YOUR EXPERIENCE.</span>
+      <h2>SELECT YOUR <span>SEAT.</span></h2>
+      <p>Choose from the available seating layout.</p>
+    </div>
+
+    <div class="seat-layout">
+      <div class="pitch">FOOTBALL PITCH</div>
+
+      <div class="seat-legend">
+        <span><i class="available"></i> Available</span>
+        <span><i class="selected"></i> Selected</span>
+        <span><i class="unavailable"></i> Unavailable</span>
+      </div>
+
+      <div class="seat-groups" id="seatGroups"></div>
+
+      <div class="booking-summary">
+        <div>
+          <small>SELECTED SEATS</small>
+          <h3 id="selectedSeats">None</h3>
+        </div>
+        <div>
+          <small>ESTIMATED TOTAL</small>
+          <h3 id="totalPrice">KSh 0</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="booking-form" id="bookingForm">
+      <h2>Customer Details</h2>
+      <p>Enter your details to continue with your booking.</p>
+
+      <input type="text" id="customerName" placeholder="Full Name" required>
+      <input type="email" id="customerEmail" placeholder="Email Address" required>
+      <input type="tel" id="customerPhone" placeholder="Phone Number" required>
+
+      <button type="button" id="continueBooking">CONTINUE TO PAYMENT</button>
+    </div>
+  </section>
+
+  <section class="section" id="my-ticket">
+    <div class="section-heading">
+      <span class="eyebrow">YOUR MATCHDAY PASS</span>
+      <h2>YOUR <span>DIGITAL TICKET.</span></h2>
+      <p>Your ticket will appear here after verified payment.</p>
+    </div>
+
+    <div class="ticket-lookup">
+      <h3>Retrieve Your Ticket</h3>
+      <p>Enter the booking ID and email used during purchase.</p>
+
+      <label for="lookupBookingId">Booking ID</label>
+      <input type="text" id="lookupBookingId" placeholder="Enter your booking ID">
+
+      <label for="lookupEmail">Email Address</label>
+      <input type="email" id="lookupEmail" placeholder="Enter your email address">
+
+      <button type="button" id="retrieveTicketBtn">RETRIEVE MY TICKET</button>
+    </div>
+
+    <div id="ticketMessage" class="ticket-message">
+      <p>No ticket to display yet. Complete a booking and payment first.</p>
+    </div>
+
+    <article id="digitalTicket" class="digital-ticket" hidden>
+      <div class="bm-ticket-top">
+        <div class="bm-ticket-brand">
+          <div class="digital-brand">BIG<span>MATCH.</span></div>
+          <small>THE HOME OF MATCHDAY EXPERIENCES</small>
+        </div>
+        <div class="bm-ticket-type">MATCHDAY<br>PASS</div>
+      </div>
+
+      <div class="bm-ticket-match">
+        <div class="bm-match-label">INTERNATIONAL FRIENDLY</div>
+
+        <div class="bm-teams">
+          <h2>BAYERN<br>MUNICH</h2>
+          <span>VS</span>
+          <h2>AJAX</h2>
+        </div>
+
+        <div class="bm-match-meta">
+          <span id="ticketEventDate">EVENT DATE TO BE CONFIRMED</span>
+          <span id="ticketVenue">VENUE TO BE CONFIRMED</span>
+        </div>
+      </div>
+
+      <div class="bm-ticket-body">
+        <div class="bm-ticket-qr">
+          <div id="ticketQrCode" aria-label="Ticket QR code"></div>
+          <strong>SCAN FOR ENTRY</strong>
+          <small>Keep your QR code secure</small>
+        </div>
+
+        <div class="bm-ticket-info">
+          <div class="bm-ticket-number">
+            <small>TICKET NUMBER</small>
+            <strong id="ticketNumber">—</strong>
+            <span id="ticketStatus">AWAITING VERIFICATION</span>
+          </div>
+
+          <div class="bm-seat-grid">
+            <div>
+              <small>CATEGORY</small>
+              <strong id="ticketCategory">—</strong>
+            </div>
+            <div>
+              <small>SECTION</small>
+              <strong id="ticketSection">—</strong>
+            </div>
+            <div>
+              <small>ROW</small>
+              <strong id="ticketRow">—</strong>
+            </div>
+            <div>
+              <small>SEAT</small>
+              <strong id="ticketSeat">—</strong>
+            </div>
+          </div>
+
+          <div class="bm-ticket-price">
+            <small>ADMISSION PASS</small>
+            <strong id="ticketPrice">—</strong>
+          </div>
+
+          <div class="bm-small-qr">
+            <div id="ticketQrCodeSmall" aria-label="Secondary ticket QR code"></div>
+            <small>QUICK SCAN</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="bm-ticket-barcode">
+        <div class="bm-barcode-lines"></div>
+        <small id="ticketBarcodeNumber">BIG MATCH · ADMISSION PASS</small>
+      </div>
+
+      <div class="digital-ticket-footer">
+        <strong>VALID FOR ENTRY</strong>
+        <span>FOOTBALL BRINGS US TOGETHER</span>
+      </div>
+    </article>
+
+    <div class="ticket-actions" id="ticketActions" hidden>
+      <button type="button" id="downloadTicket">DOWNLOAD / PRINT TICKET</button>
+    </div>
+
+    <p class="notice dark-notice">
+      Entry must be confirmed by an authorized ticket scanner.
+    </p>
+  </section>
+
+  <section class="section about-section" id="about">
+    <div>
+      <span class="eyebrow">MORE THAN A GAME</span>
+      <h2>FEEL THE <span>ENERGY.</span></h2>
+      <p>BIG MATCH brings the matchday experience closer to football fans with a simple ticket discovery and booking experience.</p>
+    </div>
+    <div class="about-image"></div>
+  </section>
+
+  <section class="final-cta">
+    <span class="eyebrow">DON'T MISS THE MOMENT BOOK THROUGH BIGMATCH</span>
+    <h2>YOUR MATCHDAY.<br>YOUR MOMENT.</h2>
+    <a href="#tickets" class="primary-button">EXPLORE TICKETS ↗</a>
+  </section>
+
+</main>
+
+<footer>
+  <a class="logo" href="#">BIG<span>MATCH.</span></a>
+  <p>THE COUNTDOWN IS ON!!! BOOK YOUR TICKETS EARLY.</p>
+  <small>© 2026 BIG MATCH. All rights reserved.</small>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="supabase-config.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
